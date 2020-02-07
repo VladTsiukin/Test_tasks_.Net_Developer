@@ -1,0 +1,93 @@
+﻿@model StoreManagement.Web.Models.Product.ProductsVM
+@{
+    ViewData["Title"] = "Products Of Store";
+}
+<h1>Products Of Store</h1>
+<p class="mt-4">
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalProduct">
+        <i class="fa fa-plus" aria-hidden="true"></i>
+    </button>
+</p>
+@if (Model != null)
+{
+    <table class="table table-sm table-responsive-sm table-striped">
+        <thead>
+            <tr>
+                <th>
+                    Name
+                </th>
+                <th>
+                    Description
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Products)
+            {
+                <tr id="tr-@item.ProductId">
+                    <td class="tr-name">
+                        @Html.DisplayFor(modelItem => item.Name)
+                    </td>
+                    <td class="tr-description">
+                        @Html.DisplayFor(modelItem => item.Description)
+                    </td>
+                    <td class="parentItem" data-product-id="@item.ProductId">
+                        <a href="#" class="btn btn-primary editProduct">
+                            <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
+                        </a> |
+                        <a href="#" class="btn btn-primary deleteProduct">
+                            <i class="fa fa-trash-o" aria-hidden="true"></i>
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p class="bg-info">Products not found.</p>
+}
+@section modal {
+    @* Modal product *@
+    <div class="modal fade" id="modalProduct" tabindex="-1" role="dialog" aria-labelledby="modalProductTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalProductTitle">Add new product to store</h5>
+                    <button type="button" class="close closeBtn" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form id="formProduct">
+                    @Html.AntiForgeryToken()
+                    <input type="number" value="@Model.StoreId" name="StoreId" id="StoreId" hidden />
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="ProductName">Name</label>
+                            <input type="text" class="form-control" id="ProductName" name="ProductName"
+                                   placeholder="Enter the name of product" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="ProductDescription">Description</label>
+                            <input type="text" class="form-control" id="ProductDescription" name="ProductDescription"
+                                   placeholder="Enter the description of product" required>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary btnModalProduct">Save changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    @{await Html.RenderPartialAsync("_AlertModal");}
+}
+@section css {
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+}
+@section scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script src="~/js/product.min.js" defer async></script>
+}
